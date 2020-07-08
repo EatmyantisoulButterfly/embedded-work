@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">每日体温</string>
+
+    <string name="setting">设置</string>
+    <string name="code_scan">扫一扫</string>
+    <!-- 提醒资源 -->
+    <string name="notify_title">今日份填报来了</string>
+    <string name="notify_text">请进入软件填写今日信息</string>
+
+    <!-- 主界面资源 -->
+    <string name="name_label">姓名：</string>
+    <string name="name">张三</string>
+    <string name="account_label">账号：</string>
+    <string name="account">账号</string>
+    <string name="location_label">位置：</string>
+    <string name="location">定位中</string>
+    <string name="temperature_label">体温：</string>
+    <string name="temperature">请输入体温</string>
+    <string name="temperature_unit">℃</string>
+    <string name="have_infections_nearby">附近有无感染</string>
+    <string name="submit">提交</string>
+    <string name="location_permission_error">请授予定位权限</string>
+    <string name="storage_permission_error">请授予拍照和存储权限</string>
+    <string name="not_completion">请填写完整</string>
+    <string name="submit_success">提交成功</string>
+    <string name="submit_fail">今日已经提交过了</string>
+    <string name="face_fail">比对失败</string>
+    <!-- Preference Titles -->
+    <string name="user_header">用户</string>
+    <string name="remind_header">提醒</string>
+
+    <!-- User Preferences -->
+    <string name="user_name_key">user name</string>
+    <string name="user_name_title">用户名</string>
+    <string name="user_status">status</string>
+
+    <!-- Remind Preferences -->
+    <string name="need_remind_key">need remind</string>
+    <string name="need_remind_tittle">每日提醒</string>
+    <string name="remind_summary">开启后会在每天到达设定时间后的第一次解锁时提醒，部分手机需要设置自启动权限，且将省电策略设置为无限制，并且允许通知</string>
+    <string name="remind_time_key">remind time</string>
+    <string name="remind_time_title">提醒时间</string>
+    <string name="default_remind_time">04:00</string>
+
+    <string name="log_out">退出登录</string>
+    <string name="log_out_key">log out</string>
+    <!-- 登录界面 -->
+    <string name="title_activity_login">登录</string>
+    <string name="prompt_userId">账号</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="action_sign_in_short">登录</string>
+    <string name="login_failed">登录失败</string>
+</resources>
