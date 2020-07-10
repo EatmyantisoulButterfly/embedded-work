@@ -2,14 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.embedded">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,27 +18,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.embedded.SettingActivity" />
+        <activity android:name=".RegisterActivity"></activity>
+        <activity android:name=".SettingActivity" />
         <activity
-            android:name="com.example.embedded.LoginActivity"
+            android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
 
         <receiver
-            android:name="com.example.embedded.ScreenUnlockReceiver"
+            android:name=".ScreenUnlockReceiver"
             android:enabled="true"
             android:exported="false" />
 
-        <service android:name="com.baidu.location.f"
+        <service
+            android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"/>
+            android:process=":remote" />
+
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="5C0Bs5ZzhkQ35yyOuAKjj9CSOpwekq6X"/>
+            android:value="5C0Bs5ZzhkQ35yyOuAKjj9CSOpwekq6X" />
+
         <service
-            android:name="com.example.embedded.WaitForTheFirstUnlockService"
+            android:name=".WaitForTheFirstUnlockService"
             android:exported="false" />
 
-        <activity android:name="com.example.embedded.MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,7 +53,7 @@
         </activity>
 
         <provider
-            android:name="com.example.embedded.data.MyContentProvider"
+            android:name=".data.MyContentProvider"
             android:authorities="com.example.embedded"
             android:enabled="true"
             android:exported="true" />

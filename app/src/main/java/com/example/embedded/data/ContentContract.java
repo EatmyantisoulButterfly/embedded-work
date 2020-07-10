@@ -25,6 +25,10 @@ public class ContentContract {
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_USER_ID = "user_id";
         public static final String COLUMN_PASSWORD = "password";
+        public static final String COLUMN_AGE="age";
+        public static final String COLUMN_PERSON_NUMBER="person_number";
+        public static final String COLUMN_SEX="sex";
+        public static final String COLUMN_ADDRESS="address";
     }
     public static final Uri USER_CONTENT_URI = BASE_CONTENT_URI.buildUpon()
             .appendPath(TABLE_USER)

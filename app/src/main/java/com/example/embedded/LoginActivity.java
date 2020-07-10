@@ -3,6 +3,7 @@ package com.example.embedded;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +34,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
     private EditText userIdEditText;
     private EditText passwordEditText;
-    private Button loginButton;
+    private Button loginButton,registerButton;
     private ProgressBar loadingProgressBar;
 
     @Override
@@ -44,6 +45,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         userIdEditText = findViewById(R.id.userId);
         passwordEditText = findViewById(R.id.password);
         loginButton = findViewById(R.id.login);
+        registerButton=findViewById(R.id.bt_register);
         loadingProgressBar = findViewById(R.id.loading);
 
 
@@ -64,6 +66,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             public void onClick(View v) {
                 login(userIdEditText.getText().toString(),
                         passwordEditText.getText().toString());
+            }
+        });
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent registerIntent=new Intent(getApplicationContext(),RegisterActivity.class);
+                startActivity(registerIntent);
             }
         });
     }
