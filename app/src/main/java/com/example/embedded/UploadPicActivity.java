@@ -34,8 +34,8 @@ public class UploadPicActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_pic);
         mIV = findViewById(R.id.iv_face);
-        upload=findViewById(R.id.upload);
-        progressBar=findViewById(R.id.progressBar);
+        upload = findViewById(R.id.upload);
+        progressBar = findViewById(R.id.progressBar);
         findViewById(R.id.bt_choose).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,14 +82,19 @@ public class UploadPicActivity extends AppCompatActivity {
                 if (data != null && data.getData() != null) {
                     Uri uri = data.getData();
                     bitmap = FaceUtils.getBitmapFromUri(this, uri);// BitmapFactory.decodeStream(fis);
+                    mIV.setImageBitmap(bitmap);
+                    upload.setVisibility(View.VISIBLE);
                 }
                 break;
             case TAKE_PHOTO_REQUEST_CODE:
-                bitmap = FaceUtils.getPhoto(this);
+                if (resultCode == RESULT_OK) {
+                    bitmap = FaceUtils.getPhoto(this);
+                    mIV.setImageBitmap(bitmap);
+                    upload.setVisibility(View.VISIBLE);
+                }
                 break;
         }
-        mIV.setImageBitmap(bitmap);
-        upload.setVisibility(View.VISIBLE);
+
     }
 
     static class UploadTask extends AsyncTask<String, Void, Boolean> {
@@ -108,9 +113,9 @@ public class UploadPicActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Boolean doInBackground(String ... userId) {
+        protected Boolean doInBackground(String... userId) {
             UploadPicActivity activity = activityReference.get();
-            return FaceUtils.uploadFace(activity.getApplicationContext(),activity.bitmap,userId[0]);
+            return FaceUtils.uploadFace(activity.getApplicationContext(), activity.bitmap, userId[0]);
         }
 
         @Override

@@ -40,8 +40,8 @@ class MyDAO {
             oos.writeObject(user);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] buffer = new byte[1024];
-            dataInputStream.read(buffer);
-            String ID=new String(buffer, 0, buffer.length);
+            int length=dataInputStream.read(buffer);
+            String ID=new String(buffer, 0, length);
             return Long.parseLong(ID);
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,8 +91,8 @@ class MyDAO {
             oos.writeObject(data);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] buffer = new byte[1024];
-            dataInputStream.read(buffer);
-            String ID=new String(buffer, 0, buffer.length);
+            int length=dataInputStream.read(buffer);
+            String ID=new String(buffer, 0, length);
             return Long.parseLong(ID);
         } catch (IOException e) {
             e.printStackTrace();

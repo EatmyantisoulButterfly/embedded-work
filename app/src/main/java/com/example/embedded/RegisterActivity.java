@@ -64,10 +64,10 @@ public class RegisterActivity extends AppCompatActivity {
                     values.put(ContentContract.TableUser.COLUMN_USER_ID, account);
                     values.put(ContentContract.TableUser.COLUMN_PASSWORD, passWord);
                     values.put(ContentContract.TableUser.COLUMN_NAME, name);
-//                    values.put(ContentContract.TableUser.COLUMN_AGE, age);
-//                    values.put(ContentContract.TableUser.COLUMN_PERSON_NUMBER, personNumber);
-//                    values.put(ContentContract.TableUser.COLUMN_SEX, sex);
-//                    values.put(ContentContract.TableUser.COLUMN_ADDRESS, address);
+                    values.put(ContentContract.TableUser.COLUMN_AGE, age);
+                    values.put(ContentContract.TableUser.COLUMN_PERSON_NUMBER, personNumber);
+                    values.put(ContentContract.TableUser.COLUMN_SEX, sex);
+                    values.put(ContentContract.TableUser.COLUMN_ADDRESS, address);
                     new RegisterTask(RegisterActivity.this,getContentResolver()).execute(values);
                 }
             }
