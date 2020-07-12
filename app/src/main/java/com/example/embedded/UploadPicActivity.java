@@ -118,9 +118,13 @@ public class UploadPicActivity extends AppCompatActivity {
             UploadPicActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
             if (aBoolean) {
-                Toast.makeText(activity, "上传成功", Toast.LENGTH_SHORT).show();
-            } else
-                Toast.makeText(activity, "上传失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "注册成功", Toast.LENGTH_SHORT).show();
+                activity.setResult(RESULT_OK);
+                activity.finish();
+            } else {
+                Toast.makeText(activity, "注册失败", Toast.LENGTH_SHORT).show();
+                activity.setResult(RESULT_CANCELED);
+            }
             activity.progressBar.setVisibility(View.GONE);
         }
     }

@@ -1,5 +1,6 @@
 package com.example.embedded;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentResolver;
@@ -30,6 +31,8 @@ public class RegisterActivity extends AppCompatActivity {
     private Spinner mSex;
     private EditText mAddress;
     private ProgressBar progressBar;
+
+    private static final int UPLOAD_FACE_REQUEST_CODE = 967;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,11 +105,18 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(activity, "注册成功", Toast.LENGTH_SHORT).show();
                 Intent uploadFace=new Intent(activity,UploadPicActivity.class);
                 uploadFace.putExtra("userId",activity.mAccount.getText().toString());
-                activity.startActivity(uploadFace);
+                activity.startActivityForResult(uploadFace,UPLOAD_FACE_REQUEST_CODE);
             } else
                 Toast.makeText(activity, "注册失败", Toast.LENGTH_SHORT).show();
             activity.progressBar.setVisibility(View.GONE);
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==UPLOAD_FACE_REQUEST_CODE&&resultCode==RESULT_OK){
+            finish();
+        }
+    }
 }

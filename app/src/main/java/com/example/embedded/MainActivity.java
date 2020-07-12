@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int TAKE_PHOTO_REQUEST_CODE = 3;
     public static final int DEFAULT_VIEW = 0x22;
     private static final int REQUEST_CODE_SCAN = 0X01;
+    private static final int REQUEST_CODE_UPLOAD_FACE = 229;
 
     private TextView tvName, tvAccount, tvLocation, tvTemperatureUnit;
     private EditText etTemperature;
@@ -75,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
                                 String.valueOf(System.currentTimeMillis())).build(),
                 null, null, null, null);
         System.out.println(data.getCount());*/
-        getLocationPermission();
-        getStorageAndCameraPermission();
 
+        getStorageAndCameraPermission();
+        getLocationPermission();
         tvName = findViewById(R.id.tvName);
         tvAccount = findViewById(R.id.tvAccount);
         tvLocation = findViewById(R.id.tvLocation);
@@ -100,13 +102,17 @@ public class MainActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-
+                            Looper.prepare();
                             if (!FaceUtils.isUpload(UserUtils.getUserId(MainActivity.this))) {
+                                Toast.makeText(MainActivity.this, "还没有注册人脸，请注册", Toast.LENGTH_SHORT).show();
                                 Intent uploadFace = new Intent(MainActivity.this, UploadPicActivity.class);
                                 uploadFace.putExtra("userId", UserUtils.getUserId(MainActivity.this));
-                                startActivity(uploadFace);
-                            } else
+                                startActivityForResult(uploadFace, REQUEST_CODE_UPLOAD_FACE);
+                            } else {
+                                Toast.makeText(MainActivity.this, "请上传人脸进行用户验证", Toast.LENGTH_LONG).show();
                                 takePhoto();
+                            }
+                            Looper.loop();
                         }
                     }).start();
                 } else
@@ -171,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Uri uri) {
             MainActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
-            if(uri==null) {
+            if (uri == null) {
                 Toast.makeText(activity, activity.getString(R.string.face_fail), Toast.LENGTH_SHORT).show();
             } else if (ContentUris.parseId(uri) != -1) {
                 Toast.makeText(activity, activity.getString(R.string.submit_success), Toast.LENGTH_SHORT).show();
@@ -264,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                     finish();
                 }
+                break;
             case TAKE_PHOTO_REQUEST_CODE:
                 if (grantResults.length < 3 || grantResults[0] != PackageManager.PERMISSION_GRANTED
                         || grantResults[1] != PackageManager.PERMISSION_GRANTED
@@ -273,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                     finish();
                 }
+                break;
         }
     }
 
@@ -304,7 +312,8 @@ public class MainActivity extends AppCompatActivity {
                     new SubmitTask(MainActivity.this, getContentResolver()).execute(values);
                 } else
                     Toast.makeText(MainActivity.this, getString(R.string.not_completion), Toast.LENGTH_SHORT).show();
-            }
+            } else
+                progressBar.setVisibility(View.GONE);
         }
 
         //从onActivityResult返回data中，用 ScanUtil.RESULT作为key值取到HmsScan返回值
@@ -342,6 +351,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+        }
+
+        if (requestCode == REQUEST_CODE_UPLOAD_FACE) {
+            progressBar.setVisibility(View.GONE);
         }
     }
 
