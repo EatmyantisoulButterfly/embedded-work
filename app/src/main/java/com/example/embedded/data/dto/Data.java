@@ -10,7 +10,7 @@ public class Data implements Serializable {
     private String temperature;
     private String aroundInjection;
     private Timestamp time;
-    public Data(long _ID ,String userId, String location, String temperature, String aroundInjection, Timestamp time){
+    public Data(Long _ID , String userId, String location, String temperature, String aroundInjection, Timestamp time){
         this._ID=_ID;
         this.userId=userId;
         this.location=location;

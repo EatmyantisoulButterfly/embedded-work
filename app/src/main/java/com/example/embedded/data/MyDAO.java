@@ -3,11 +3,111 @@ package com.example.embedded.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 
-class MyDAO {
-    private SQLiteDatabase mDB;
+import com.example.embedded.data.dto.Data;
+import com.example.embedded.data.dto.User;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
+class MyDAO {
+    //private SQLiteDatabase mDB;
+    private String SERVER_IP = "10.0.2.2";
+    private int REGISTER_PORT = 9003;
+    private int LOGIN_PORT=9002;
+    private int SUBMIT_PORT=9001;
+
+    private static final String[] USER_COLUMN_NAME = { ContentContract.TableUser.COLUMN_USER_ID,
+            ContentContract.TableUser.COLUMN_PASSWORD,
+            ContentContract.TableUser.COLUMN_NAME };
+
+    long insertUser(ContentValues values) {
+        User user = new User(values.getAsString(ContentContract.TableUser.COLUMN_USER_ID),
+                values.getAsString(ContentContract.TableUser.COLUMN_PASSWORD),
+                values.getAsString(ContentContract.TableUser.COLUMN_NAME),
+                values.getAsString(ContentContract.TableUser.COLUMN_AGE),
+                values.getAsString(ContentContract.TableUser.COLUMN_PERSON_NUMBER),
+                values.getAsString(ContentContract.TableUser.COLUMN_SEX),
+                values.getAsString(ContentContract.TableUser.COLUMN_ADDRESS));
+        Socket socket=null;
+        try {
+            socket = new Socket(SERVER_IP, REGISTER_PORT);
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(user);
+            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+            byte[] buffer = new byte[1024];
+            dataInputStream.read(buffer);
+            String ID=new String(buffer, 0, buffer.length);
+            return Long.parseLong(ID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return -1L;
+    }
+
+    Cursor queryUser(String userID) {
+        MatrixCursor cursor=new MatrixCursor(USER_COLUMN_NAME);
+        Socket socket=null;
+        try {
+            socket = new Socket(SERVER_IP, LOGIN_PORT);
+            DataOutputStream dos=new DataOutputStream(socket.getOutputStream());
+            dos.write(userID.getBytes());
+            ObjectInputStream ois=new ObjectInputStream(socket.getInputStream());
+            User user= (User) ois.readObject();
+            cursor.addRow(new Object[]{user.getAccount(),user.getPassWord(),user.getName()});
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return cursor;
+    }
+
+    long insertData(ContentValues values) {
+        Data data=new Data(null,
+                values.getAsString(ContentContract.TableData.COLUMN_USER_ID),
+                values.getAsString(ContentContract.TableData.COLUMN_LOCATION),
+                values.getAsString(ContentContract.TableData.COLUMN_TEMPERATURE),
+                values.getAsString(ContentContract.TableData.COLUMN_AROUND_INJECTION),
+                null);
+        Socket socket=null;
+        try {
+            socket = new Socket(SERVER_IP, SUBMIT_PORT);
+            ObjectOutputStream oos=new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(data);
+            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+            byte[] buffer = new byte[1024];
+            dataInputStream.read(buffer);
+            String ID=new String(buffer, 0, buffer.length);
+            return Long.parseLong(ID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return -1L;
+    }
+/*
     MyDAO(Context context) {
         LocalDataDBHelper mDBHHelper = new LocalDataDBHelper(context);
         mDB = mDBHHelper.getWritableDatabase();
@@ -55,5 +155,6 @@ class MyDAO {
             " where strftime('%Y-%m-%d'," + ContentContract.TableData.COLUMN_TIME + ")=date(" + time/1000 + ", 'unixepoch', 'localtime')",
             null);
 }
+*/
 
 }

@@ -58,7 +58,7 @@ public class MyContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
 //        mDBHHelper=new LocalDataDBHelper(getContext());
-        mDao = new MyDAO(getContext());
+        mDao = new MyDAO();
         return true;
     }
 
@@ -72,7 +72,7 @@ public class MyContentProvider extends ContentProvider {
                 if (userID != null)
                     return mDao.queryUser(userID);
                 break;
-            case data:
+            /*case data:
                 userID = uri.getQueryParameter(ContentContract.TableUser.COLUMN_USER_ID);
                 String timeStr = uri.getQueryParameter(ContentContract.TableData.COLUMN_TIME);
                 if (timeStr != null) {
@@ -82,7 +82,7 @@ public class MyContentProvider extends ContentProvider {
                     else
                         return mDao.queryDataForSomeday(time);
                 }
-                break;
+                break;*/
         }
         throw new UnsupportedOperationException("Unknown uri: " + uri);
     }
