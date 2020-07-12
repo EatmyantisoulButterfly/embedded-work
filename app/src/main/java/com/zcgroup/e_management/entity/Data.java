@@ -1,9 +1,10 @@
-package com.example.embedded.data.dto;
+package com.zcgroup.e_management.entity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 public class Data implements Serializable {
+    private static final long serialVersionUID = 2L;
     private Long _ID ;
     private String userId;
     private String location;

@@ -1,13 +1,11 @@
 package com.example.embedded.data;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.database.sqlite.SQLiteDatabase;
 
-import com.example.embedded.data.dto.Data;
-import com.example.embedded.data.dto.User;
+import com.zcgroup.e_management.entity.Data;
+import com.zcgroup.e_management.entity.User;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
