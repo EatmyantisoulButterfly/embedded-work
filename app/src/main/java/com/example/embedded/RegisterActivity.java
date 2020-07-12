@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -40,6 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
         mPersonNumber = findViewById(R.id.et_personNumber);
         mSex = findViewById(R.id.sp_sex);
         mAddress = findViewById(R.id.et_address);
+        progressBar=findViewById(R.id.progressBar);
         findViewById(R.id.bt_register).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,14 +61,15 @@ public class RegisterActivity extends AppCompatActivity {
                     values.put(ContentContract.TableUser.COLUMN_USER_ID, account);
                     values.put(ContentContract.TableUser.COLUMN_PASSWORD, passWord);
                     values.put(ContentContract.TableUser.COLUMN_NAME, name);
-                    values.put(ContentContract.TableUser.COLUMN_AGE, age);
-                    values.put(ContentContract.TableUser.COLUMN_PERSON_NUMBER, personNumber);
-                    values.put(ContentContract.TableUser.COLUMN_SEX, sex);
-                    values.put(ContentContract.TableUser.COLUMN_ADDRESS, address);
+//                    values.put(ContentContract.TableUser.COLUMN_AGE, age);
+//                    values.put(ContentContract.TableUser.COLUMN_PERSON_NUMBER, personNumber);
+//                    values.put(ContentContract.TableUser.COLUMN_SEX, sex);
+//                    values.put(ContentContract.TableUser.COLUMN_ADDRESS, address);
                     new RegisterTask(RegisterActivity.this,getContentResolver()).execute(values);
                 }
             }
         });
+        //startActivity(new Intent(this,UploadPicActivity.class));
     }
 
     static class RegisterTask extends AsyncTask<ContentValues, Void, Uri> {
@@ -96,9 +100,13 @@ public class RegisterActivity extends AppCompatActivity {
             if (activity == null || activity.isFinishing()) return;
             if (ContentUris.parseId(uri) != -1) {
                 Toast.makeText(activity, "注册成功", Toast.LENGTH_SHORT).show();
+                Intent uploadFace=new Intent(activity,UploadPicActivity.class);
+                uploadFace.putExtra("userId",activity.mAccount.getText().toString());
+                activity.startActivity(uploadFace);
             } else
                 Toast.makeText(activity, "注册失败", Toast.LENGTH_SHORT).show();
             activity.progressBar.setVisibility(View.GONE);
         }
     }
+
 }

@@ -4,17 +4,22 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 
 import androidx.core.content.FileProvider;
 
 import com.baidu.aip.face.AipFace;
 import com.baidu.aip.util.Base64Util;
+import com.baidu.aip.util.Util;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -28,29 +33,50 @@ public class FaceUtils {
 
     public static boolean searchFace(Context context) {
         AipFace client = new AipFace(APP_ID, API_KEY, SECRET_KEY);
-        try {
-//            String filePath = getFaceImagePath(context).getPath();
+        //            String filePath = getFaceImagePath(context).getPath();
 //            byte[] bytes = Util.readFileByBytes(filePath);
-            byte[] bytes=getScaledBitArray(context);
-            String image = Base64Util.encode(bytes);
-            String userId = UserUtils.getUserId(context);
-            HashMap<String, String> options = new HashMap<String, String>();
-            options.put("user_id", userId);
-            options.put("liveness_control","LOW");
+        byte[] bytes=getScaledBitArray(getPhoto(context));
+        String image = Base64Util.encode(bytes);
+        String userId = UserUtils.getUserId(context);
+        HashMap<String, String> options = new HashMap<String, String>();
+        options.put("user_id", userId);
+        options.put("liveness_control","LOW");
 //            JSONObject res = client.addUser(image, imageType, groupId, userId, null);
-            JSONObject res=client.search(image,imageType,groupId,options);
-            System.out.println(res.isNull("result"));
-            return !res.isNull("result");
+        JSONObject res=client.search(image,imageType,groupId,options);
+        System.out.println(res.isNull("result"));
+        return !res.isNull("result");
 //            System.out.println(res.toString(2));
-        } catch (IOException e) {
+    }
+
+    public static boolean uploadFace(Context context,Bitmap bitmap,String userId){
+        if(bitmap==null)return false;
+        AipFace client=new AipFace(APP_ID,API_KEY,SECRET_KEY);
+        String image= Base64Util.encode(getScaledBitArray(bitmap));
+        HashMap<String, String> options = new HashMap<String, String>();
+        options.put("action_type","REPLACE");
+        JSONObject res=client.addUser(image,imageType,groupId,userId,options);
+        try {
+            if(res.getInt("error_code")==0)
+                return true;
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    private static byte[] getScaledBitArray(Context context) throws IOException {
-        FileInputStream fis=new FileInputStream(getFaceImagePath(context).getAbsolutePath());
-        Bitmap bitmap = BitmapFactory.decodeStream(fis);
+    public static boolean isUpload(String userId){
+        AipFace client=new AipFace(APP_ID,API_KEY,SECRET_KEY);
+        JSONObject res=client.faceGetlist(userId,groupId,null);
+        try {
+            return res.getInt("error_code")==0
+                    &&res.getJSONObject("result").getJSONArray("face_list").length()>0;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static byte[] getScaledBitArray(Bitmap bitmap){
         ByteArrayOutputStream scaledBitmap = new ByteArrayOutputStream();
         int options_ = 100;
         bitmap.compress(Bitmap.CompressFormat.JPEG, options_, scaledBitmap);
@@ -64,8 +90,25 @@ public class FaceUtils {
             if (options_ == 50)
                 break;
         }
-        fis.close();
         return scaledBitmap.toByteArray();
+    }
+
+    public static Bitmap getPhoto(Context context) {
+        FileInputStream fis= null;
+        Bitmap bitmap=null;
+        try {
+            fis = new FileInputStream(getFaceImagePath(context).getAbsolutePath());
+            bitmap = BitmapFactory.decodeStream(fis);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return bitmap;
     }
 
     private static File getFaceImagePath(Context context){
@@ -77,5 +120,19 @@ public class FaceUtils {
                 "com.example.embedded.fileprovider",
                 getFaceImagePath(context));
 //        return Uri.fromFile(mPhotoFile);
+    }
+
+    public static Bitmap getBitmapFromUri(Context context, Uri uri) {
+        try {
+            ParcelFileDescriptor parcelFileDescriptor =
+                    context.getContentResolver().openFileDescriptor(uri, "r");
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+            Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+            parcelFileDescriptor.close();
+            return image;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 public class Data implements Serializable {
-    private long _ID ;
+    private Long _ID ;
     private String userId;
     private String location;
     private String temperature;

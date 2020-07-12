@@ -50,7 +50,6 @@ import java.lang.ref.WeakReference;
 public class MainActivity extends AppCompatActivity {
 
 
-
     private static final String TAG = "MainActivity";
     private static final int LOCATION_REQUEST_CODE = 1;
     private static final int LOCATION_SETTING_REQUEST_CODE = 2;
@@ -96,8 +95,20 @@ public class MainActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
                 if (!etTemperature.getText().toString().isEmpty()) {
-                    takePhoto();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if (!FaceUtils.isUpload(UserUtils.getUserId(MainActivity.this))) {
+                                Intent uploadFace = new Intent(MainActivity.this, UploadPicActivity.class);
+                                uploadFace.putExtra("userId", UserUtils.getUserId(MainActivity.this));
+                                startActivity(uploadFace);
+                            } else
+                                takePhoto();
+                        }
+                    }).start();
                 } else
                     Toast.makeText(MainActivity.this, getString(R.string.not_completion), Toast.LENGTH_SHORT).show();
             }
@@ -119,10 +130,14 @@ public class MainActivity extends AppCompatActivity {
     private void getStorageAndCameraPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this
-                    , new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, TAKE_PHOTO_REQUEST_CODE);
+                    , new String[]{Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE}, TAKE_PHOTO_REQUEST_CODE);
         }
     }
 
@@ -140,19 +155,25 @@ public class MainActivity extends AppCompatActivity {
             MainActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
             activity.progressBar.setVisibility(View.VISIBLE);
+
             super.onPreExecute();
         }
 
         @Override
         protected Uri doInBackground(ContentValues... contentValues) {
-            return mResolver.insert(ContentContract.DATA_CONTENT_URI, contentValues[0]);
+            MainActivity activity = activityReference.get();
+            if (FaceUtils.searchFace(activity))
+                return mResolver.insert(ContentContract.DATA_CONTENT_URI, contentValues[0]);
+            else return null;
         }
 
         @Override
         protected void onPostExecute(Uri uri) {
             MainActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
-            if (ContentUris.parseId(uri) != -1) {
+            if(uri==null) {
+                Toast.makeText(activity, activity.getString(R.string.face_fail), Toast.LENGTH_SHORT).show();
+            } else if (ContentUris.parseId(uri) != -1) {
                 Toast.makeText(activity, activity.getString(R.string.submit_success), Toast.LENGTH_SHORT).show();
             } else
                 Toast.makeText(activity, activity.getString(R.string.submit_fail), Toast.LENGTH_SHORT).show();
@@ -244,8 +265,9 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 }
             case TAKE_PHOTO_REQUEST_CODE:
-                if (grantResults.length < 2 || grantResults[0] != PackageManager.PERMISSION_GRANTED
-                        || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length < 3 || grantResults[0] != PackageManager.PERMISSION_GRANTED
+                        || grantResults[1] != PackageManager.PERMISSION_GRANTED
+                        || grantResults[2] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.storage_permission_error),
                             Toast.LENGTH_SHORT).show();
@@ -267,65 +289,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == TAKE_PHOTO_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 progressBar.setVisibility(View.VISIBLE);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Message message = new Message();
-                        if (FaceUtils.searchFace(getApplicationContext())) {
-                            message.arg1 = 1;
-                        } else
-                            message.arg1 = -1;
-                        handlerFaceSearch.sendMessage(message);
-                    }
-                }).start();
-
-            }
-        }
-        if (resultCode != RESULT_OK || data == null) {
-            return;
-        }
-        //从onActivityResult返回data中，用 ScanUtil.RESULT作为key值取到HmsScan返回值
-        if (requestCode == REQUEST_CODE_SCAN) {
-            Object obj = data.getParcelableExtra(ScanUtil.RESULT);
-            if (obj instanceof HmsScan) {
-                if (!TextUtils.isEmpty(((HmsScan) obj).getOriginalValue())) {
-                    //Toast.makeText(this, ((HmsScan) obj).getOriginalValue(), Toast.LENGTH_SHORT).show();
-                    if(((HmsScan) obj).getOriginalValue().equals("out")){
-                        UserUtils.setUserStatus(this,true);
-                        Toast.makeText(this, "疫情期间，请在两小时内返回小区！", Toast.LENGTH_LONG).show();
-                    }else if(((HmsScan) obj).getOriginalValue().equals("in")) {
-                        boolean status=UserUtils.getUserStatus(this);
-                        if(status){
-                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                            LayoutInflater layoutInflater = getLayoutInflater();
-                            View v1 = layoutInflater.inflate(R.layout.activity_scan_result, null);
-                            builder.create();
-                            builder.setView(v1);
-                            builder.setTitle("权限验证");
-                            builder.setNegativeButton("返回", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    UserUtils.setUserStatus(MainActivity.this,false);
-                                    dialog.dismiss();
-                                }
-                            });
-                            builder.show();
-                        }else{
-                            Toast.makeText(this, "您不是本小区居民，疫情期间请勿走动，如有必要，请联系小区负责人！", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @SuppressLint("HandlerLeak")
-    Handler handlerFaceSearch = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            if (msg.arg1 == 1) {
-                String temperature = etTemperature.getText().toString();
-                if (!temperature.isEmpty()) {
+                if (!etTemperature.getText().toString().isEmpty()) {
                     ContentValues values = new ContentValues();
                     values.put(ContentContract.TableData.COLUMN_NAME, tvName.getText().toString());
                     values.put(ContentContract.TableData.COLUMN_USER_ID,
@@ -340,15 +304,45 @@ public class MainActivity extends AppCompatActivity {
                     new SubmitTask(MainActivity.this, getContentResolver()).execute(values);
                 } else
                     Toast.makeText(MainActivity.this, getString(R.string.not_completion), Toast.LENGTH_SHORT).show();
-            } else
-                Toast.makeText(MainActivity.this, getString(R.string.face_fail), Toast.LENGTH_SHORT).show();
-            progressBar.setVisibility(View.GONE);
+            }
         }
-    };
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        handlerFaceSearch.removeCallbacksAndMessages(null);
+        //从onActivityResult返回data中，用 ScanUtil.RESULT作为key值取到HmsScan返回值
+        if (requestCode == REQUEST_CODE_SCAN) {
+            if (resultCode != RESULT_OK || data == null) {
+                return;
+            }
+            Object obj = data.getParcelableExtra(ScanUtil.RESULT);
+            if (obj instanceof HmsScan) {
+                if (!TextUtils.isEmpty(((HmsScan) obj).getOriginalValue())) {
+                    //Toast.makeText(this, ((HmsScan) obj).getOriginalValue(), Toast.LENGTH_SHORT).show();
+                    if (((HmsScan) obj).getOriginalValue().equals("out")) {
+                        UserUtils.setUserStatus(this, true);
+                        Toast.makeText(this, "疫情期间，请在两小时内返回小区！", Toast.LENGTH_LONG).show();
+                    } else if (((HmsScan) obj).getOriginalValue().equals("in")) {
+                        boolean status = UserUtils.getUserStatus(this);
+                        if (status) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            LayoutInflater layoutInflater = getLayoutInflater();
+                            View v1 = layoutInflater.inflate(R.layout.activity_scan_result, null);
+                            builder.create();
+                            builder.setView(v1);
+                            builder.setTitle("权限验证");
+                            builder.setNegativeButton("返回", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    UserUtils.setUserStatus(MainActivity.this, false);
+                                    dialog.dismiss();
+                                }
+                            });
+                            builder.show();
+                        } else {
+                            Toast.makeText(this, "您不是本小区居民，疫情期间请勿走动，如有必要，请联系小区负责人！", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            }
+        }
     }
+
 }

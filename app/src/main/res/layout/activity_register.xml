@@ -10,8 +10,7 @@
         android:id="@+id/et_passWord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="密码"
         android:inputType="textPassword"
@@ -23,7 +22,7 @@
         android:id="@+id/et_age"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="21dp"
+        android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="年龄"
         android:inputType="number"
@@ -35,7 +34,7 @@
         android:id="@+id/et_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="11dp"
+        android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="姓名"
         android:inputType="textPersonName"
@@ -48,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="101dp"
-        android:layout_marginBottom="19dp"
+        android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="手机号"
         android:inputType="phone"
@@ -61,12 +60,11 @@
         android:id="@+id/et_personNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="身份证号码"
         app:layout_constraintBottom_toTopOf="@+id/sp_sex"
-        app:layout_constraintEnd_toEndOf="@+id/et_age"
+        app:layout_constraintStart_toStartOf="@+id/et_age"
         app:layout_constraintTop_toBottomOf="@+id/et_age" />
 
     <EditText
@@ -84,11 +82,11 @@
     <Spinner
         android:id="@+id/sp_sex"
         android:layout_width="210dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="18dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:entries="@array/sex"
         app:layout_constraintBottom_toTopOf="@+id/et_address"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/et_personNumber"
         app:layout_constraintTop_toBottomOf="@+id/et_personNumber" />
 
     <Button

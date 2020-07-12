@@ -24,7 +24,7 @@
     <string name="not_completion">请填写完整</string>
     <string name="submit_success">提交成功</string>
     <string name="submit_fail">今日已经提交过了</string>
-    <string name="face_fail">比对失败</string>
+    <string name="face_fail">验证失败</string>
     <!-- Preference Titles -->
     <string name="user_header">用户</string>
     <string name="remind_header">提醒</string>
