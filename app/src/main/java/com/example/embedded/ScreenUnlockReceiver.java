@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
+import com.example.embedded.utilities.AlarmUtils;
 import com.example.embedded.utilities.NotificationUtils;
 
 public class ScreenUnlockReceiver extends BroadcastReceiver {
@@ -36,6 +37,7 @@ public class ScreenUnlockReceiver extends BroadcastReceiver {
             Log.i(TAG, "no equals");
 
         }
+        AlarmUtils.setAlarm(context);
     }
 
     private void unregisterRemindReceiver(Context context) {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">每日体温</string>
+    <string name="app_name">疫情防控</string>
 
     <string name="setting">设置</string>
     <string name="code_scan">扫一扫</string>

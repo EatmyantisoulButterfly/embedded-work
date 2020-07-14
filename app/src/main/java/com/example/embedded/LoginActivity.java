@@ -54,8 +54,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    login(userIdEditText.getText().toString(),
-                            passwordEditText.getText().toString());
+                    login(userIdEditText.getText().toString().trim(),
+                            passwordEditText.getText().toString().trim());
                 }
                 return false;
             }
@@ -64,8 +64,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                login(userIdEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                login(userIdEditText.getText().toString().trim(),
+                        passwordEditText.getText().toString().trim());
             }
         });
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +78,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
     private void login(String userId, String passWord) {
+        if(userId.isEmpty()||passWord.isEmpty())
+            return;
         if (isLogIn)
             return;
         isLogIn = true;
@@ -123,6 +125,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             loadingProgressBar.setVisibility(View.GONE);
             Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_LONG).show();
         }
+        LoaderManager.getInstance(this).destroyLoader(0);
     }
 
     @Override
