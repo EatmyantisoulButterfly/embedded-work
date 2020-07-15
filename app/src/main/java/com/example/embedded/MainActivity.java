@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
                 if (!etTemperature.getText().toString().isEmpty()) {
                     new Thread(new Runnable() {
                         @Override
@@ -199,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
             startLogIn();
         tvName.setText(userName);
         tvAccount.setText(userId);
-        AlarmUtils.setAlarm(getApplicationContext());
+        //AlarmUtils.setAlarm(getApplicationContext());
         Log.i(TAG, "onStart: ");
     }
 

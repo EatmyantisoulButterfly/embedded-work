@@ -56,7 +56,7 @@ public class AlarmUtils {
     private static PendingIntent getPendingIntent(Context context) {
         Intent intent = new Intent(context, ScreenUnlockReceiver.class);
         intent.setAction(ScreenUnlockReceiver.ACTION_FIRST_UNLOCK_REMIND_REGISTER);
-        return PendingIntent.getBroadcast(context,//getApplicationContext(),
+        return PendingIntent.getBroadcast(context.getApplicationContext(),
                 REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 

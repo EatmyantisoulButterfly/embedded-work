@@ -15,6 +15,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 class MyDAO {
+<<<<<<< HEAD
     //private SQLiteDatabase mDB;
     private String SERVER_IP = "192.168.1.6";
     private int REGISTER_PORT = 9003;
@@ -22,8 +23,16 @@ class MyDAO {
     private int SUBMIT_PORT=9001;
 
     private static final String[] USER_COLUMN_NAME = { ContentContract.TableUser.COLUMN_USER_ID,
+=======
+    private static final String[] USER_COLUMN_NAME = {ContentContract.TableUser.COLUMN_USER_ID,
+>>>>>>> 2b13d41fb654baf4ceab51712563f5c8d0ed6f02
             ContentContract.TableUser.COLUMN_PASSWORD,
-            ContentContract.TableUser.COLUMN_NAME };
+            ContentContract.TableUser.COLUMN_NAME};
+    private int REGISTER_PORT = 9003;
+    //private SQLiteDatabase mDB;
+    private String SERVER_IP = "192.168.0.106";
+    private int LOGIN_PORT = 9002;
+    private int SUBMIT_PORT = 9001;
 
     long insertUser(ContentValues values) {
         User user = new User(values.getAsString(ContentContract.TableUser.COLUMN_USER_ID),
@@ -33,21 +42,27 @@ class MyDAO {
                 values.getAsString(ContentContract.TableUser.COLUMN_PERSON_NUMBER),
                 values.getAsString(ContentContract.TableUser.COLUMN_SEX),
                 values.getAsString(ContentContract.TableUser.COLUMN_ADDRESS));
-        Socket socket=null;
+        Socket socket = null;
         try {
             socket = new Socket(SERVER_IP, REGISTER_PORT);
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(user);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] buffer = new byte[1024];
+<<<<<<< HEAD
             int length=dataInputStream.read(buffer);
             String ID=new String(buffer, 0, length);
+=======
+            int length = dataInputStream.read(buffer);
+            String ID = new String(buffer, 0, length);
+>>>>>>> 2b13d41fb654baf4ceab51712563f5c8d0ed6f02
             return Long.parseLong(ID);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
-                socket.close();
+                if (socket != null)
+                    socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -56,20 +71,22 @@ class MyDAO {
     }
 
     Cursor queryUser(String userID) {
-        MatrixCursor cursor=new MatrixCursor(USER_COLUMN_NAME);
-        Socket socket=null;
+        MatrixCursor cursor = new MatrixCursor(USER_COLUMN_NAME);
+        Socket socket = null;
         try {
             socket = new Socket(SERVER_IP, LOGIN_PORT);
-            DataOutputStream dos=new DataOutputStream(socket.getOutputStream());
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
             dos.write(userID.getBytes());
-            ObjectInputStream ois=new ObjectInputStream(socket.getInputStream());
-            User user= (User) ois.readObject();
-            cursor.addRow(new Object[]{user.getAccount(),user.getPassWord(),user.getName()});
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            User user = (User) ois.readObject();
+            if (user != null)
+                cursor.addRow(new Object[]{user.getAccount(), user.getPassWord(), user.getName()});
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
-                socket.close();
+                if (socket != null)
+                    socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -78,27 +95,33 @@ class MyDAO {
     }
 
     long insertData(ContentValues values) {
-        Data data=new Data(null,
+        Data data = new Data(null,
                 values.getAsString(ContentContract.TableData.COLUMN_USER_ID),
                 values.getAsString(ContentContract.TableData.COLUMN_LOCATION),
                 values.getAsString(ContentContract.TableData.COLUMN_TEMPERATURE),
                 values.getAsString(ContentContract.TableData.COLUMN_AROUND_INJECTION),
                 null);
-        Socket socket=null;
+        Socket socket = null;
         try {
             socket = new Socket(SERVER_IP, SUBMIT_PORT);
-            ObjectOutputStream oos=new ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(data);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] buffer = new byte[1024];
+<<<<<<< HEAD
             int length=dataInputStream.read(buffer);
             String ID=new String(buffer, 0, length);
+=======
+            int length = dataInputStream.read(buffer);
+            String ID = new String(buffer, 0, length);
+>>>>>>> 2b13d41fb654baf4ceab51712563f5c8d0ed6f02
             return Long.parseLong(ID);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
-                socket.close();
+                if (socket != null)
+                    socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
