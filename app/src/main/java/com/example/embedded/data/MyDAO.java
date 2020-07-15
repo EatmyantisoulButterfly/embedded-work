@@ -16,7 +16,7 @@ import java.net.Socket;
 
 class MyDAO {
     //private SQLiteDatabase mDB;
-    private String SERVER_IP = "10.0.2.2";
+    private String SERVER_IP = "192.168.1.6";
     private int REGISTER_PORT = 9003;
     private int LOGIN_PORT=9002;
     private int SUBMIT_PORT=9001;
@@ -40,8 +40,8 @@ class MyDAO {
             oos.writeObject(user);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] buffer = new byte[1024];
-            dataInputStream.read(buffer);
-            String ID=new String(buffer, 0, buffer.length);
+            int length=dataInputStream.read(buffer);
+            String ID=new String(buffer, 0, length);
             return Long.parseLong(ID);
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,8 +91,8 @@ class MyDAO {
             oos.writeObject(data);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] buffer = new byte[1024];
-            dataInputStream.read(buffer);
-            String ID=new String(buffer, 0, buffer.length);
+            int length=dataInputStream.read(buffer);
+            String ID=new String(buffer, 0, length);
             return Long.parseLong(ID);
         } catch (IOException e) {
             e.printStackTrace();

@@ -47,6 +47,8 @@ import com.huawei.hms.ml.scan.HmsScan;
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SCAN = 0X01;
     private static final int REQUEST_CODE_UPLOAD_FACE = 229;
 
-    private TextView tvName, tvAccount, tvLocation, tvTemperatureUnit;
+    private TextView tvName, tvAccount, tvLocation, tvTemperatureUnit,timeTextView;
     private EditText etTemperature;
     private CheckedTextView ctvAroundInjection;
     private Button submit;
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         tvLocation = findViewById(R.id.tvLocation);
         etTemperature = findViewById(R.id.etTemperature);
         tvTemperatureUnit = findViewById(R.id.tvTemperatureUnit);
+        timeTextView=findViewById(R.id.time_textView);
         progressBar = findViewById(R.id.progressBar);
         ctvAroundInjection = findViewById(R.id.ctvAroundInjection);
         ctvAroundInjection.setOnClickListener(new View.OnClickListener() {
@@ -333,10 +336,11 @@ public class MainActivity extends AppCompatActivity {
                         if (status) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(this);
                             LayoutInflater layoutInflater = getLayoutInflater();
+                            String time=new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(new Date());
                             View v1 = layoutInflater.inflate(R.layout.activity_scan_result, null);
                             builder.create();
                             builder.setView(v1);
-                            builder.setTitle("权限验证");
+                            builder.setTitle("权限验证:"+time);
                             builder.setNegativeButton("返回", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
