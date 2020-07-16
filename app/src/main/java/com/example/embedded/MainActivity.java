@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         tvLocation = findViewById(R.id.tvLocation);
         etTemperature = findViewById(R.id.etTemperature);
         tvTemperatureUnit = findViewById(R.id.tvTemperatureUnit);
-        timeTextView=findViewById(R.id.time_textView);
         progressBar = findViewById(R.id.progressBar);
         ctvAroundInjection = findViewById(R.id.ctvAroundInjection);
         ctvAroundInjection.setOnClickListener(new View.OnClickListener() {

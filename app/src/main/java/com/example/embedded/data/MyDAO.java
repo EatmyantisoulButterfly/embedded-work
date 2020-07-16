@@ -15,22 +15,13 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 class MyDAO {
-<<<<<<< HEAD
-    //private SQLiteDatabase mDB;
-    private String SERVER_IP = "192.168.1.6";
-    private int REGISTER_PORT = 9003;
-    private int LOGIN_PORT=9002;
-    private int SUBMIT_PORT=9001;
 
-    private static final String[] USER_COLUMN_NAME = { ContentContract.TableUser.COLUMN_USER_ID,
-=======
+    //private SQLiteDatabase mDB;
+    private String SERVER_IP = "192.168.0.106";
     private static final String[] USER_COLUMN_NAME = {ContentContract.TableUser.COLUMN_USER_ID,
->>>>>>> 2b13d41fb654baf4ceab51712563f5c8d0ed6f02
             ContentContract.TableUser.COLUMN_PASSWORD,
             ContentContract.TableUser.COLUMN_NAME};
     private int REGISTER_PORT = 9003;
-    //private SQLiteDatabase mDB;
-    private String SERVER_IP = "192.168.0.106";
     private int LOGIN_PORT = 9002;
     private int SUBMIT_PORT = 9001;
 
@@ -49,13 +40,8 @@ class MyDAO {
             oos.writeObject(user);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] buffer = new byte[1024];
-<<<<<<< HEAD
-            int length=dataInputStream.read(buffer);
-            String ID=new String(buffer, 0, length);
-=======
             int length = dataInputStream.read(buffer);
             String ID = new String(buffer, 0, length);
->>>>>>> 2b13d41fb654baf4ceab51712563f5c8d0ed6f02
             return Long.parseLong(ID);
         } catch (IOException e) {
             e.printStackTrace();
@@ -108,13 +94,8 @@ class MyDAO {
             oos.writeObject(data);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             byte[] buffer = new byte[1024];
-<<<<<<< HEAD
-            int length=dataInputStream.read(buffer);
-            String ID=new String(buffer, 0, length);
-=======
             int length = dataInputStream.read(buffer);
             String ID = new String(buffer, 0, length);
->>>>>>> 2b13d41fb654baf4ceab51712563f5c8d0ed6f02
             return Long.parseLong(ID);
         } catch (IOException e) {
             e.printStackTrace();
